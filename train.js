@@ -14,9 +14,10 @@ function checkAndReplace(prompt) {
 }
 
 async function updatePromptsWithResults() {
-    const [prompts] = await pool.query('SELECT id, result FROM prompts WHERE trained_result IS NULL');
+    const [prompts] = await pool.query('SELECT id, result FROM prompts WHERE trained_result IS NULL AND is_taken = 0');
 
     for (const prompt of prompts) {
+        await pool.query('UPDATE prompts SET is_taken = ? WHERE id = ?', [1, prompt.id]);
         let modifiedPrompt = checkAndReplace(prompt.result);
         let train_string = `請使用 字串中關鍵字:提示詞以下的字串進行訓練  ${modifiedPrompt}`;
 
