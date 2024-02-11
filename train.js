@@ -1,12 +1,13 @@
 const mysql = require('mysql2/promise');
 const axios = require('axios');
+require('dotenv').config();
 
 const pool = mysql.createPool({
-    host: '127.0.0.1',
-    user: 'root',
-    port: 3307,
-    password: 'root',
-    database: 'cves'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    port: process.env.DB_PORT,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 
 function checkAndReplace(prompt) {
@@ -22,7 +23,7 @@ async function updatePromptsWithResults() {
         let train_string = `請使用 字串中關鍵字:提示詞以下的字串進行訓練  ${modifiedPrompt}`;
 
         try {
-            const response = await axios.get(`http://127.0.0.1:5500`, {
+            const response = await axios.get(process.env.API_URL, {
                 params: {
                     text: train_string
                 }
